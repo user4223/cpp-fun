@@ -19,15 +19,19 @@ int main(int argc, char** argv)
    auto const readInt   ([&](auto v) { return Reader::read<int>(is, v); });
    auto const readReal  ([&](auto v) { return Reader::read<double>(is, v); });
    auto const write     ([&](auto v) { Writer::write(os, v); });
-   auto const trace     ([&](auto v) { os << " -> "; Writer::write(os, v); os << '\n'; });
+   auto const trace     ([&](auto v) { os << "trace: "; Writer::write(os, v); os << '\n'; });
    
    auto const multiply  ([](auto v) { return std::get<0>(v) * std::get<1>(v); });
-   auto const devide    ([](auto v) { return std::get<0>(v) / std::get<1>(v); });
+   auto const devide    ([](auto v) 
+   {
+      //if (std::get<1>(v) == 0)
+      //{  return stde::optional<double>(); }
+      return /*stde::make_optional*/(std::get<0>(v) / std::get<1>(v)); 
+   });
    auto const count     ([](auto v) { return static_cast<int>(v.size()); });
    
    auto const splitWords([](auto v) 
    { 
-      
       std::vector<std::string> words;
       boost::split(words, v, boost::is_any_of("\t "));
       return std::make_tuple(words) ;
