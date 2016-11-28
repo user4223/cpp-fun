@@ -5,12 +5,22 @@
 #include <ostream>
 #include <tuple>
 #include <vector>
+#include <experimental/optional>
 
 struct Writer
 {
    template <typename V>
    static void write(std::ostream& os, V const& v)
    {  os << v; }
+   
+   template <typename V>
+   static void write(std::ostream& os, std::experimental::optional<V> const& v)
+   {  
+      if (v)
+      {  write(os, *v); }
+      else
+      {  os << "unset"; }
+   }
 
    template <typename T>
    static void write(std::ostream& os, std::vector<T> const& v)
