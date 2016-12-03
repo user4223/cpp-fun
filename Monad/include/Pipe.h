@@ -49,7 +49,7 @@ template <typename T, typename F>
 auto operator | (stde::optional<T>&& t, F&& f) -> typename std::enable_if<!std::is_void<decltype(detail::normalize(f(*t)))>::value, stde::optional<decltype(operator|(*t, f))>>::type
 {  
    if (t)
-   {  return stde::make_optional(operator|(*t, f)); }
+   {  return operator|(*t, f); }
    return stde::optional<decltype(operator|(*t, f))>();
 }
 
@@ -79,6 +79,6 @@ template <typename T, typename F>
 auto operator | (stde::optional<T>&& t, F&& f) -> typename std::enable_if<std::is_void<decltype(f(*t))>::value, stde::optional<T>>::type
 {  
    if (t) 
-   {  return stde::make_optional(operator|(*t, f)); } 
+   {  return operator|(*t, f); } 
    return std::forward<stde::optional<T>>(t); //< forward parameter
 }

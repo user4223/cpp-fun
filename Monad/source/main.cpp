@@ -10,6 +10,41 @@
 #include <vector>
 #include <experimental/optional>
 
+struct multiplier
+{
+   template <typename A, typename B>
+   static auto multiply(std::tuple<A, B> v) 
+   {  return std::get<0>(v) * std::get<1>(v); }
+   
+   template <typename T>
+   static auto multiply(stde::optional<T> v) 
+   {  
+      if (v)
+      {  return stde::make_optional(multiply(*v)); }
+      return stde::optional<decltype(multiply(*v))>();
+   }
+};
+
+struct devider
+{
+   template <typename A, typename B>
+   static auto devide(std::tuple<A, B> v)
+   {
+      auto b(std::get<1>(v));
+      if ( b == 0)
+      {  return stde::optional<double>(); }
+      return stde::make_optional(std::get<0>(v) / b);
+   }
+   
+   template <typename T>
+   static auto devide(stde::optional<T> v) 
+   {  
+      if (v)
+      {  return stde::make_optional(devide(*v)); }
+      return stde::optional<decltype(devide(*v))>();  
+   }
+};
+
 int main(int argc, char** argv)
 {
    auto& os(std::cout);
@@ -22,21 +57,8 @@ int main(int argc, char** argv)
    auto const write     ([&](auto v) { Writer::write(os, v); });
    auto const trace     ([&](auto v) { os << "trace: "; Writer::write(os, v); os << '\n'; });
    
-   auto const multiply  ([](auto v) 
-   { 
-      auto a(std::get<0>(v));
-      auto b(std::get<1>(v));
-      return a * b;
-   });
-   auto const devide    ([](auto v) 
-   {
-      auto a(std::get<0>(v));
-      auto b(std::get<1>(v));
-      //if ( b == 0)
-      //{  return stde::optional<double>(); }
-      //return stde::make_optional( a / b );
-      return a / b;
-   });
+   auto const multiply  ([](auto v) { return multiplier::multiply(v); });
+   auto const devide    ([](auto v) { return devider::devide(v); });
    auto const count     ([](auto v) { return static_cast<int>(v.size()); });
    
    auto const splitWords([](auto v) 
