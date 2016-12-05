@@ -33,9 +33,10 @@ struct Counter : public OptionalAware<Counter>
    template <typename T> static auto call(T&& v) 
    {  
       auto c(v.size());
-      if (c == 0)
-      {  return std::experimental::optional<int>( /*empty*/ ); }
-      return std::experimental::make_optional(static_cast<int>(c)); 
+      //if (c == 0)
+      //{  return std::experimental::optional<int>( /*empty*/ ); }
+      //return std::experimental::make_optional(static_cast<int>(c)); 
+      return static_cast<int>(c);
    }
 };
 
