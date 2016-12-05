@@ -32,10 +32,10 @@ private:
    {  return std::tuple_cat(v, std::make_tuple(value)); }
    
    template <typename T, typename V>
-   static auto createResult(std::experimental::optional<V>&& v, T&& value)
+   static auto createResult(std::experimental::optional<V> v, T&& value)
    {
       if (v)
       {  return createResult(*v, value); }
-      return value;
+      return std::make_tuple(value);
    }
 };

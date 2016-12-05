@@ -19,14 +19,14 @@ namespace detail
     */
    template <typename V>
    static auto normalize(std::tuple<V>&& v) -> V 
-   {  return std::get<0>(v); /* cannot be perfect forwarded, is extracted element */ }
+   {  return std::forward<V>(std::get<0>(v)); }
    
    template <typename V>
    static auto normalize(stde::optional<std::tuple<V>>&& v) -> stde::optional<V> 
    {
       if (v)
       {  return stde::make_optional(normalize(*v)); }
-      return stde::optional<decltype(normalize(*v))>();
+      return stde::optional<decltype(normalize(*v))>( /*empty*/ );
    }
 }
 
@@ -50,7 +50,7 @@ auto operator | (stde::optional<T>&& t, F&& f) -> typename std::enable_if<!std::
 {  
    if (t)
    {  return stde::make_optional(operator|(*t, f)); }
-   return stde::optional<decltype(operator|(*t, f))>();
+   return stde::optional<decltype(operator|(*t, f))>( /*empty*/ );
 }
 
 /** Function is called with a copy of the argument.
