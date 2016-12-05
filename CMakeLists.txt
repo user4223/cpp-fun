@@ -14,9 +14,9 @@ add_compile_options(--std=c++14)
 add_compile_options(-Wall)
 add_compile_options(-Werror)
 
-include_directories(${SOURCE_ROOT})
+FIND_PACKAGE(Boost 1.45.0 REQUIRED) # COMPONENTS ...)
 
-#FIND_PACKAGE(Boost 1.45.0 REQUIRED COMPONENTS system filesystem program_options date_time)
-#SET(Log4cxx_LIBRARIES log4cxx)
+include_directories(${SOURCE_ROOT})
+include_directories(${Boost_INCLUDE_DIRS})
 
 add_subdirectory(Monad)
