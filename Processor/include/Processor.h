@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/optional/optional.hpp>
+
 #include <vector>
 #include <future>
 #include <algorithm>
@@ -9,7 +11,6 @@
 #include <mutex>
 #include <stdexcept>
 #include <condition_variable>
-#include <experimental/optional>
 
 namespace
 {
@@ -42,7 +43,7 @@ template < typename T >
 struct Queue
 {
    typedef T value_type;
-   typedef std::experimental::optional< value_type > optional_value_type;
+   typedef boost::optional< value_type > optional_value_type;
    
    Queue() : 
       m_canceled( false )

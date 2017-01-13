@@ -1,11 +1,11 @@
 #pragma once
 
 #include <boost/algorithm/string/join.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <ostream>
 #include <tuple>
 #include <vector>
-#include <experimental/optional>
 
 struct Writer
 {
@@ -14,7 +14,7 @@ struct Writer
    {  os << v; }
    
    template <typename V>
-   static void write(std::ostream& os, std::experimental::optional<V> const& v)
+   static void write(std::ostream& os, boost::optional<V> const& v)
    {  
       if (v)
       {  write(os, *v); }

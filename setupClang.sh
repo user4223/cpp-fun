@@ -12,3 +12,4 @@ pushd $BUILD_DIR
     $SOURCE_DIR 
 popd
 
+cmake --build $BUILD_DIR --config Debug

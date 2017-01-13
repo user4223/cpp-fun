@@ -1,8 +1,9 @@
 #pragma once
 
+#include <boost/optional/optional.hpp>
+
 #include <istream>
 #include <tuple>
-#include <experimental/optional>
 
 struct Reader
 {   
@@ -34,7 +35,7 @@ private:
 // \todo We do need this overload for optionals
 // 
 //   template <typename T, typename V>
-//   static auto createResult(std::experimental::optional<V> v, T&& value)
+//   static auto createResult(boost::optional<V> v, T&& value)
 //   {
 //      /** Here we have different return types :-?
 //       */

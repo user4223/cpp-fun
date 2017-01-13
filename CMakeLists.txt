@@ -14,7 +14,8 @@ add_compile_options(--std=c++14)
 add_compile_options(-Wall)
 add_compile_options(-Werror)
 
-FIND_PACKAGE(Boost 1.45.0 REQUIRED)
+# Currently, we need some headers only
+# FIND_PACKAGE(Boost 1.45.0 REQUIRED)
 
 # For the following gtest/gmock stuff see: http://www.kaizou.org/2014/11/gtest-cmake/
 # This downloads, builds and provides gtest/gmock

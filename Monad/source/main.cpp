@@ -4,12 +4,13 @@
 #include "../include/Writer.h"
 #include "../include/OptionalAware.h"
 
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <iostream>
 #include <tuple>
 #include <vector>
-#include <experimental/optional>
 
 struct Multiplier : public OptionalAware<Multiplier>
 {   
@@ -23,8 +24,8 @@ struct Devider : public OptionalAware<Devider>
    {
       auto b(std::get<1>(v));
       if (b == 0)
-      {  return std::experimental::optional<decltype(std::get<0>(v) / b)>( /*empty*/ ); }
-      return std::experimental::make_optional(std::get<0>(v) / b);
+      {  return boost::optional<decltype(std::get<0>(v) / b)>( /*empty*/ ); }
+      return boost::make_optional(std::get<0>(v) / b);
    }
 };
 
@@ -34,8 +35,8 @@ struct Counter : public OptionalAware<Counter>
    {  
       auto c(v.size());
       //if (c == 0)
-      //{  return std::experimental::optional<int>( /*empty*/ ); }
-      //return std::experimental::make_optional(static_cast<int>(c)); 
+      //{  return boost::optional<int>( /*empty*/ ); }
+      //return boost::make_optional(static_cast<int>(c)); 
       return static_cast<int>(c);
    }
 };
@@ -67,7 +68,7 @@ int main(int argc, char** argv)
    auto const count     ([](auto v) { return OptionalAware<Counter     >::call(v); });
    auto const splitWords([](auto v) { return OptionalAware<WordSplitter>::call(v); });
    
-   //stde::optional<std::tuple<>>()
+   //boost::optional<std::tuple<>>()
    std::make_tuple()
       | readLine     |  trace
       | splitWords   |  trace

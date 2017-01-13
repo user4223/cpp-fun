@@ -1,9 +1,8 @@
 #pragma once
 
-#include <tuple>
-#include <experimental/optional>
+#include <boost/optional/optional.hpp>
 
-namespace stde = std::experimental;
+#include <tuple>
 
 namespace detail
 {
@@ -22,11 +21,11 @@ namespace detail
    {  return std::forward<V>(std::get<0>(v)); }
    
    template <typename V>
-   static auto normalize(stde::optional<std::tuple<V>>&& v) -> stde::optional<V> 
+   static auto normalize(boost::optional<std::tuple<V>>&& v) -> boost::optional<V> 
    {
       if (v)
-      {  return stde::make_optional(normalize(*v)); }
-      return stde::optional<decltype(normalize(*v))>( /*empty*/ );
+      {  return boost::make_optional(normalize(*v)); }
+      return boost::optional<decltype(normalize(*v))>( /*empty*/ );
    }
 }
 
@@ -46,11 +45,11 @@ auto operator | (T&& t, F&& f) -> typename std::enable_if<!std::is_void<decltype
     Non-void function version for optional arguments.
  */
 template <typename T, typename F>
-auto operator | (stde::optional<T>&& t, F&& f) -> typename std::enable_if<!std::is_void<decltype(detail::normalize(f(*t)))>::value, stde::optional<decltype(operator|(*t, f))>>::type
+auto operator | (boost::optional<T>&& t, F&& f) -> typename std::enable_if<!std::is_void<decltype(detail::normalize(f(*t)))>::value, boost::optional<decltype(operator|(*t, f))>>::type
 {  
    if (t)
-   {  return stde::make_optional(operator|(*t, f)); }
-   return stde::optional<decltype(operator|(*t, f))>( /*empty*/ );
+   {  return boost::make_optional(operator|(*t, f)); }
+   return boost::optional<decltype(operator|(*t, f))>( /*empty*/ );
 }
 
 /** Function is called with a copy of the argument.
@@ -76,9 +75,9 @@ auto operator | (T&& t, F&& f) -> typename std::enable_if<std::is_void<decltype(
     Void function version for optional arguments.
  */
 template <typename T, typename F>
-auto operator | (stde::optional<T>&& t, F&& f) -> typename std::enable_if<std::is_void<decltype(f(*t))>::value, stde::optional<T>>::type
+auto operator | (boost::optional<T>&& t, F&& f) -> typename std::enable_if<std::is_void<decltype(f(*t))>::value, boost::optional<T>>::type
 {  
    if (t) 
    {  operator|(*t, f); } 
-   return std::forward<stde::optional<T>>(t); //< forward parameter
+   return std::forward<boost::optional<T>>(t); //< forward parameter
 }

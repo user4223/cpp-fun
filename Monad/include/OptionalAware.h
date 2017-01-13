@@ -1,6 +1,6 @@
 #pragma once
 
-#include <experimental/optional>
+#include <boost/optional/optional.hpp>
 
 template <typename Q>
 struct OptionalAware
@@ -18,5 +18,5 @@ struct OptionalAware
     *  for the case regardless.  
     */
    template <typename T>
-   static auto call(std::experimental::optional<T> v) { assert(false); }
+   static auto call(boost::optional<T> v) { assert(false); }
 };
