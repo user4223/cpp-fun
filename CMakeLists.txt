@@ -10,10 +10,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin/${BIN_PATH_POSTFIX})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin/${BIN_PATH_POSTFIX})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin/${BIN_PATH_POSTFIX})
 
-add_compile_options(--std=c++14)
-add_compile_options(-Wall)
-add_compile_options(-Werror)
-LINK_LIBRARIES(stdc++)
+IF(NOT MSVC)
+	ADD_COMPILE_OPTIONS(--std=c++14)
+	ADD_COMPILE_OPTIONS(-Wall)
+	ADD_COMPILE_OPTIONS(-Werror)
+	LINK_LIBRARIES(stdc++)
+ENDIF()
 
 # Currently, we need some headers only
 # FIND_PACKAGE(Boost 1.45.0 REQUIRED)
@@ -53,8 +55,8 @@ SET(GMOCK_ALL_LIBRARIES
    "${binary_dir}/googlemock/libgmock_main.a"
    pthread)
 
-include_directories(${SOURCE_ROOT})
-include_directories(${Boost_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(${SOURCE_ROOT})
+INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
-add_subdirectory(Processor)
-add_subdirectory(Monad)
+ADD_SUBDIRECTORY(Processor)
+ADD_SUBDIRECTORY(Monad)
