@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.11)
+cmake_minimum_required(VERSION 2.8)
 project(cpp-fun)
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -6,13 +6,14 @@ IF(NOT CMAKE_BUILD_TYPE)
 ENDIF()
 
 GET_FILENAME_COMPONENT( SOURCE_ROOT . ABSOLUTE )
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin/${BIN_PATH_POSTFIX})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin/${BIN_PATH_POSTFIX})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${SOURCE_ROOT}/bin/${BIN_PATH_POSTFIX})
 
 add_compile_options(--std=c++14)
 add_compile_options(-Wall)
 add_compile_options(-Werror)
+LINK_LIBRARIES(stdc++)
 
 # Currently, we need some headers only
 # FIND_PACKAGE(Boost 1.45.0 REQUIRED)

@@ -1,11 +1,12 @@
 #!/bin/bash
 DIR="$( cd "$(dirname "$0")" ; pwd -P )"
-BUILD_DIR=$DIR/build/gcc
+BUILD_DIR=$DIR/build/CodeLite/Debug
 SOURCE_DIR=$DIR
 
 mkdir -p $BUILD_DIR
 pushd $BUILD_DIR
    cmake \
+   -DBIN_PATH_POSTFIX=Debug\
    -DCMAKE_BUILD_TYPE=Debug\
    -G"CodeLite - Unix Makefiles"\
     $SOURCE_DIR 
