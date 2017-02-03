@@ -111,6 +111,11 @@ TEST( Queue, CancelStopsPush )
    EXPECT_FALSE( queue.Pop() );   
 }
 
+TEST( BufferingTaskProcessor, ConstructDestroy )
+{
+   BufferingTaskProcessor< int > processor( 2 );
+}
+
 TEST( BufferingTaskProcessor, OrderedPushAndPop )
 {
    BufferingTaskProcessor< int > processor( 4 );
@@ -169,6 +174,11 @@ TEST( BufferingTaskProcessor, TerminatingVoid )
    b.Wait();
    EXPECT_EQ( 2, called.load() );
    EXPECT_EQ( 1, exception.load() );
+}
+
+TEST( TaskProcessor, ConstructDestroy )
+{
+   TaskProcessor< int > processor( 2 );
 }
 
 TEST( TaskProcessor, PushPop )
@@ -234,6 +244,11 @@ TEST( TaskProcessor, Uncopyable )
    EXPECT_THROW( processor.Push( []{ return Uncopyable(  7 ); } ), std::logic_error );
    EXPECT_EQ( 23, futureA.get().m_value );
    EXPECT_EQ(  5, futureB.get().m_value );
+}
+
+TEST( DataProcessor, ConstructDestroy )
+{
+   DataProcessor< int, int > processor( 1, []( int i ){ return i; } );
 }
 
 TEST( DataProcessor, PushPop )
@@ -317,6 +332,13 @@ TEST( DataProcessor, Uncopyable )
    processor.Push( Uncopyable(  5 ) );
    EXPECT_EQ( 46, processor.PopOrWait()->get().m_value );
    EXPECT_EQ( 10, processor.PopOrWait()->get().m_value );
+}
+
+TEST( ContinuationDataProcessor, ConstructDestroy )
+{
+   DataProcessor< int, int > a( 2, []( int i ) { return i; } );
+   ContinuationDataProcessor< int, int > b( 2, a, []( auto i ) { return i.get(); } );
+   ContinuationDataProcessor< int, int > c( 2, b, []( auto i ) { return i.get(); } );
 }
 
 TEST( ContinuationDataProcessor, PushPopMixedTypes )
@@ -483,4 +505,52 @@ TEST( ContinuationDataProcessor, VoidTermination )
    a.Cancel(); ///< Cancel first
    c.Wait();   ///< Wait for last
    EXPECT_EQ( 2, exceptionCount.load() );
+}
+
+TEST( TaskAndContinuationDataProcessor, ConstructDestroy )
+{
+   BufferingTaskProcessor< int > a( 1 );
+   ContinuationDataProcessor< int, int > b( 1, a, []( std::future< int > _input ) { return _input.get() * 2; } );
+}
+
+TEST( TaskAndContinuationDataProcessor, PushPop )
+{
+   BufferingTaskProcessor< int > a( 2 );
+   ContinuationDataProcessor< int, int > b( 2, a, []( std::future< int > _input ) { return _input.get() * 2; } );
+   
+   a.Push([] { return 2; });
+   a.Push([] { return 23; });
+   EXPECT_EQ(  4, b.PopOrWait()->get() );
+   EXPECT_EQ( 46, b.PopOrWait()->get() );
+   
+   a.Cancel(); ///< Cancel first
+   b.Wait();   ///< Wait for last
+}
+
+TEST( TaskAndContinuationDataProcessor, Termination )
+{
+   std::atomic<int> exceptionCount( 0 );
+   std::vector< int > values;
+   BufferingTaskProcessor< int > a( 2 );
+   ContinuationDataProcessor< int, int > b( 2, a, []( std::future< int > _input ) 
+   { 
+      auto v(_input.get());
+      if ( v == 5 )
+      {  throw std::exception(); }
+      return v * 2; 
+   } );
+   TerminationProcessor< int > c( b, [ &values, &exceptionCount ]( std::future< int > input )
+   {
+      try 
+      {  values.emplace_back( input.get() ); }
+      catch ( std::exception const& e )
+      {  ++exceptionCount; }
+   } );
+   a.Push([] { return 2; });
+   a.Push([] { return 5; });
+   a.Push([] { return 23; });   
+   a.Cancel(); ///< Cancel first
+   c.Wait();   ///< Wait for last   
+   EXPECT_EQ( 1, exceptionCount );
+   EXPECT_EQ( std::vector< int >( { 4, 46 } ), values );
 }

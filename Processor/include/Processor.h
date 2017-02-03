@@ -380,6 +380,11 @@ private:
    std::future< void > m_worker;
 };
 
+
+/** Add somthing like ContinuationTaskProcessor
+ */
+
+
 template < typename QueueT, typename FunctionT >
 struct TerminationWorker
 {
