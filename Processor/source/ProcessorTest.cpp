@@ -213,6 +213,21 @@ TEST( TaskProcessor, PushPop )
    } );
 }
 
+TEST( TaskProcessor, Chaining )
+{
+   TaskProcessor< int > a( 2 );
+   TaskProcessor< int > b( 2 );
+   std::vector< std::future< int > > futures;
+   for ( int no( 0 ); no < 100; ++no )
+   { 
+      futures.emplace_back( b.Push(a.Push([=]{ return no; }), [](int v){ return v * 2; }) );
+   }
+   for ( int no( 0 ); no < 100; ++no )
+   {
+      EXPECT_EQ(no * 2, futures[no].get());
+   }   
+}
+
 TEST( TaskProcessor, Throw )
 {
    TaskProcessor< int > processor( 1 );
@@ -260,6 +275,30 @@ TEST( TaskProcessor, Uncopyable )
    EXPECT_THROW( processor.Push( []{ return Uncopyable(  7 ); } ), std::logic_error );
    EXPECT_EQ( 23, futureA.get().m_value );
    EXPECT_EQ(  5, futureB.get().m_value );
+}
+
+TEST( ContinuationBufferingTaskProcessor, PushPop )
+{
+   BufferingTaskProcessor< int > a( 4 );
+   ContinuationBufferingTaskProcessor<int, float> b( 4, a );
+   ContinuationBufferingTaskProcessor<float, std::array<unsigned char, 3>> c( 4, b );
+   
+   std::vector< std::future< int > > futures;
+   for ( int no( 0 ); no < 100; ++no )
+   { 
+      a.Push([no]       { return no; });
+      b.Push([](int v)  { return v * 2.f; });
+      c.Push([](float v)
+      {  
+         auto c((unsigned char)v);
+         return std::array<unsigned char, 3>({c, c, c}); 
+      });
+   }
+   for ( unsigned char no( 0 ); no < 200; no += 2 )
+   {
+      std::array<unsigned char, 3> v({no, no, no});
+      EXPECT_EQ( v, c.PopOrWait()->get() );
+   }   
 }
 
 TEST( DataProcessor, ConstructDestroy )

@@ -199,6 +199,12 @@ struct TaskProcessor : ProcessorBase< std::packaged_task< T() > >
       this->m_output.Push( std::move( task ) );
       return std::move( future );
    }
+   
+   template < typename InputT, typename FunctionT >
+   std::future< value_type > Push( std::future<InputT> future, FunctionT&& function )
+   {
+      return Push( std::bind( function, std::bind( std::move< InputT& >, std::move(future.get()) ) ) );
+   }
               
    void Cancel()
    {
@@ -269,6 +275,33 @@ private:
    input_queue_type m_input;
    std::vector< std::future< void > > m_worker;
 };
+
+
+template < typename InputT, typename OutputT = void >
+struct ContinuationBufferingTaskProcessor : BufferingTaskProcessor< OutputT >
+{
+   typedef BufferingTaskProcessor< OutputT > base_type;
+   typedef BufferingTaskProcessor< InputT > predecessor_type;
+   
+   using base_type::Pop;
+   using base_type::PopOrWait;
+   using base_type::Cancel;
+   using base_type::Wait;
+    
+   ContinuationBufferingTaskProcessor( size_t workerCount, predecessor_type& predecessor ) : 
+       base_type(workerCount)
+      ,m_predecessor(predecessor)
+   {}
+      
+   template < typename FunctionT >
+   void Push(FunctionT&& function)
+   {
+      base_type::Push( std::bind( function, std::bind( std::move< InputT& >, std::move(m_predecessor.Pop()->get()) ) ) );
+   }
+   
+private:
+   predecessor_type& m_predecessor;
+};
   
 template < typename InputT, typename OutputT = void >
 struct DataProcessor : BufferingTaskProcessor< OutputT >
@@ -277,6 +310,7 @@ struct DataProcessor : BufferingTaskProcessor< OutputT >
    typedef std::function< OutputT( InputT&& ) > function_type;
    
    using base_type::Cancel;
+   using base_type::Wait;
    using base_type::Pop;
    using base_type::PopOrWait;
    
@@ -379,11 +413,6 @@ private:
    std::atomic< bool > m_canceled;
    std::future< void > m_worker;
 };
-
-
-/** Add somthing like ContinuationTaskProcessor
- */
-
 
 template < typename QueueT, typename FunctionT >
 struct TerminationWorker
