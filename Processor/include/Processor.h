@@ -88,7 +88,7 @@ struct Queue
       
       auto r( std::move( m_queue.front() ) );
       m_queue.pop();
-      return std::move( r );
+      return optional_value_type(std::move(r));
    }
             
    template < typename DurationType = std::chrono::seconds >
@@ -106,7 +106,7 @@ struct Queue
       
       auto r( std::move( m_queue.front() ) );
       m_queue.pop();
-      return std::move( r );
+      return optional_value_type(std::move(r));
    }
    
 private:
@@ -130,11 +130,11 @@ struct ProcessorBase
    ProcessorBase() : m_output(), m_mutex() {}
                              
    typename queue_type::optional_value_type Pop()
-   {  return std::move( m_output.Pop() ); }
+   {  return m_output.Pop(); }
       
    template < typename DurationType = std::chrono::seconds >
    typename queue_type::optional_value_type PopOrWait( DurationType duration = GetMax< DurationType >() )
-   {  return std::move( m_output.PopOrWait( duration ) ); }
+   {  return m_output.PopOrWait( duration ); }
    
    auto Lock() const
    {  return std::move( std::unique_lock< std::mutex >( m_mutex ) ); }

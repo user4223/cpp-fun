@@ -9,6 +9,10 @@
 #include <algorithm>
 #include <chrono>
 
+/** \todo Add builder to create complex processor setup
+    \todo Add chain of responsibility
+ */
+
 struct Uncopyable
 {
    explicit Uncopyable( int v ) : m_value( v ) {}
@@ -108,6 +112,18 @@ TEST( Queue, CancelStopsPush )
    EXPECT_THROW( queue.Push( 7 ), std::logic_error );
    EXPECT_EQ( 23, queue.Pop().value() );
    EXPECT_EQ(  5, queue.Pop().value() );
+   EXPECT_FALSE( queue.Pop() );   
+}
+
+TEST( Queue, Uncopyable )
+{
+   Queue< Uncopyable > queue;
+   queue.Push( Uncopyable(23) );
+   queue.Push( Uncopyable( 5) );
+   queue.Cancel();
+   EXPECT_THROW( queue.Push( Uncopyable(7) ), std::logic_error );
+   EXPECT_EQ( 23, queue.Pop().value().m_value );
+   EXPECT_EQ(  5, queue.PopOrWait().value().m_value );
    EXPECT_FALSE( queue.Pop() );   
 }
 
