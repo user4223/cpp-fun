@@ -291,12 +291,12 @@ TEST( ContinuationBufferingTaskProcessor, PushPop )
       c.Push([](float v)
       {  
          auto c((unsigned char)v);
-         return std::array<unsigned char, 3>({c, c, c}); 
+         return std::array<unsigned char, 3>{{c, c, c}};
       });
    }
    for ( unsigned char no( 0 ); no < 200; no += 2 )
    {
-      std::array<unsigned char, 3> v({no, no, no});
+      std::array<unsigned char, 3> v{{no, no, no}};
       EXPECT_EQ( v, c.PopOrWait()->get() );
    }   
 }

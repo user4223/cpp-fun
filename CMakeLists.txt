@@ -19,7 +19,7 @@ ELSE()
 ENDIF()
 
 # Currently, we need some headers only
-# FIND_PACKAGE(Boost 1.45.0 REQUIRED)
+FIND_PACKAGE(Boost 1.61.0 REQUIRED)
 
 # For the following gtest/gmock stuff see: http://www.kaizou.org/2014/11/gtest-cmake/
 # This downloads, builds and provides gtest/gmock
@@ -62,3 +62,4 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 ADD_SUBDIRECTORY(Processor)
 ADD_SUBDIRECTORY(Monad)
 ADD_SUBDIRECTORY(Semaphore)
+ADD_SUBDIRECTORY(TypeChecksum)
