@@ -1,5 +1,5 @@
-# Run cmake:
-# cmake -DCMAKE_TOOLCHAIN_FILE=~/programming/Tools/Clang.cmake  ../
+# Run cmake somehow like this:
+# cmake -DCMAKE_TOOLCHAIN_FILE=.../Clang.cmake  ...
 
 SET (CMAKE_C_COMPILER   "/usr/bin/clang")
 SET (CMAKE_CXX_COMPILER "/usr/bin/clang++")
