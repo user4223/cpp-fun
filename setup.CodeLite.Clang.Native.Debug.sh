@@ -10,7 +10,7 @@ pushd $BUILD_DIR
    -DCMAKE_BUILD_TYPE=Debug\
    -G"CodeLite - Unix Makefiles"\
    -DCMAKE_TOOLCHAIN_FILE=./Clang.cmake\
-   -DBOOST_ROOT=$DIR/../lib/boost_1_65_0\
+   -DBOOST_ROOT=$DIR/../lib/boost/clang/boost_1_65_0\
     $SOURCE_DIR 
 popd
 

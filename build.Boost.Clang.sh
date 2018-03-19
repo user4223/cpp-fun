@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
-pushd $DIR/../lib/boost_1_65_0
+pushd $DIR/../lib/boost/clang/boost_1_65_0
    ./bootstrap.sh --with-toolset=clang
    ./b2 clean
    ./b2	\
